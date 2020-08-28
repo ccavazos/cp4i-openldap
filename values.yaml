@@ -1,0 +1,25 @@
+OpenLdap:
+  Image: "docker.io/osixia/openldap"
+  ImageTag: "1.4.0"
+  ImagePullPolicy: "Always"
+  Component: "openldap"
+  Replicas: 1
+  Cpu: "512m"
+  Memory: "200Mi"
+  Organisation: "Example Inc."
+  Domain: "ibm.com"
+  AdminPassword: "Passw0rd!"
+  SeedUsers: 
+    usergroup: "cp4iusers"
+    userlist: "user1,user2,user3,user4"
+    initialPassword: "cp4iForAll"
+
+PhpLdapAdmin:
+  Component: "phpadmin"
+  Image: "docker.io/osixia/phpldapadmin"
+  ImageTag: "0.9.0"
+  ImagePullPolicy: "Always"
+  Replicas: 1
+  Cpu: "512m"
+  Memory: "200Mi"
+  Https: "false"

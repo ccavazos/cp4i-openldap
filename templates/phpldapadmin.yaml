@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{.Release.Name}}-admin 
+  name: {{.Release.Name}}-admin-service
+spec:
+  ports:
+{{ if (eq .Values.PhpLdapAdmin.Https "true" ) }}
+  - port: 443
+{{ else }}
+  - port: 80
+{{ end }}
+  selector:
+    app: {{.Release.Name}}-admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-admin
+spec:
+  replicas: {{.Values.OpenLdap.Replicas}}
+  selector:
+    matchLabels:
+      app: {{.Release.Name}}-admin
+  template:
+    metadata:
+      labels:
+        app: {{.Release.Name}}-admin
+    spec:
+      containers:
+      - name: {{.Release.Name}}-admin
+        image: {{.Values.PhpLdapAdmin.Image}}:{{.Values.PhpLdapAdmin.ImageTag}}
+        ports:
+{{ if (eq .Values.PhpLdapAdmin.Https "true" ) }}
+          - containerPort: 443
+{{ else }}
+          - containerPort: 80
+{{ end }}          
+        env:
+        - name: PHPLDAPADMIN_HTTPS
+          value: "{{.Values.OpenLdap.Https}}"
+        - name: PHPLDAPADMIN_LDAP_HOSTS
+          value: "{{.Release.Name}}.{{.Release.Namespace}}.svc.cluster.local"
